@@ -7,6 +7,12 @@ async function findUserByEmail(email:string){
     });
 }
 
+async function findById(id:number){
+    return await prisma.user.findFirst({
+        where: {id:id}
+    });
+}
+
 async function createUser(data: CreateUserData) {
     await prisma.user.create({
         data: {
@@ -19,6 +25,7 @@ async function createUser(data: CreateUserData) {
 
 const repoUsers = {
     findUserByEmail,
+    findById,
     createUser
 }
 
