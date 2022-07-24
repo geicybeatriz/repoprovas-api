@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyToken } from "../utils/authUtils.js";
+import authUtils from "../utils/authUtils.js";
 
 export default async function tokenValidation(req:Request, res:Response, next:NextFunction){
     const {authorization} = req.headers;
@@ -8,7 +8,7 @@ export default async function tokenValidation(req:Request, res:Response, next:Ne
     const token = authorization?.replace('Bearer ', '');
     if(!token) throw {type:"unauthorized", message:"unauthorized token"};
 
-    const checkToken = await verifyToken(token);
+    const checkToken = await authUtils.verifyToken(token);
     res.locals.userId = checkToken;
 
     next();

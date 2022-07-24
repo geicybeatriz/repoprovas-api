@@ -1,6 +1,6 @@
 import { Test } from "@prisma/client";
 import repoTests from "../repositories/testsRepository.js";
-import repoUsers from "../repositories/userRepository.js";
+import authUtils from "../utils/authUtils.js";
 import testUtils from "../utils/testUtils.js";
 
 export type CreateTestData = Omit<Test, "id">;
@@ -14,8 +14,7 @@ interface newTest{
 }
 
 async function createTest(data:newTest, userId:number){
-    const user = await repoUsers.findById(userId);
-    if(!user) throw {type:"not found", message:"user not found"};
+    await authUtils.verifyUser(userId);
 
     const teacher = await testUtils.verifyTeacher(data.teacher);
     const category = await testUtils.verifyCategory(data.category);
@@ -33,8 +32,27 @@ async function createTest(data:newTest, userId:number){
     return;
 }
 
+
+async function getAllTests(userId:number, groupBy:string){
+    await authUtils.verifyUser(userId);
+
+    if(groupBy === "discipline"){
+        const testsDiscipline = await repoTests.getTestsByDiscipline();
+        return testsDiscipline;
+    }
+
+    if(groupBy === "teacher"){
+        const testsTeacher = await repoTests.getTestsByTeacher();
+        return testsTeacher
+    }
+
+    const tests = await repoTests.findAllTests();
+    return tests;
+}
+
 const testService = {
-    createTest
+    createTest,
+    getAllTests,
 }
 
 export default testService;
