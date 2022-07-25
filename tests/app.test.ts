@@ -64,7 +64,6 @@ describe("POST /signin", () => {
     });
 });
 
-afterAll(async () => {
-    await prisma.$executeRaw`TRUNCATE TABLE users;`;
-    await prisma.$disconnect();
-})
+// afterAll(async () => {
+//     await prisma.$disconnect();
+// })
