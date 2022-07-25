@@ -2,10 +2,12 @@ import supertest from "supertest";
 import app from "../src/app.js";
 import prisma from "../src/config/database.js";
 
+const agent = supertest(app);
+
+//dados do usuário
 const EMAIL = "teste1@gmail.com";
 const PASSWORD = "senhaTeste01";
 const userData = { email:EMAIL, password:PASSWORD};
-const agent = supertest(app);
 
 beforeEach(async () => await prisma.$executeRaw`TRUNCATE TABLE users`)
 
@@ -61,3 +63,8 @@ describe("POST /signin", () => {
         expect(login.status).toBe(404);
     });
 });
+
+afterAll(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE users;`;
+    await prisma.$disconnect();
+})
